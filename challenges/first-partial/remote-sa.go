@@ -9,6 +9,7 @@ import (
 	"strings"
 )
 
+//This method is a struct type point
 type Point struct {
 	X, Y float64
 }
