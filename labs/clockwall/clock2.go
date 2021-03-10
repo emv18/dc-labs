@@ -6,7 +6,6 @@ import (
 	"io"
 	"log"
 	"net"
-	"os"
 	"time"
 )
 
@@ -36,7 +35,7 @@ func TimeIn(t time.Time, name string) (time.Time, error) {
 func main() {
 	listener, err := net.Listen("tcp", "localhost:9090")
 	var port = flag.Int("port", 1234, "Port")
-	tz := os.Getenv("TZ")
+	//tz := os.Getenv("TZ")
 	if err != nil {
 		log.Fatal(err)
 	}
