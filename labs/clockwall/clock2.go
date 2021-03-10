@@ -2,13 +2,16 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"io"
 	"log"
 	"net"
+	"os"
 	"time"
 )
 
-func handleConn(c net.Conn) {
+func handleConn(c net.Conn, TZtime string) {
 	defer c.Close()
 	for {
 		_, err := io.WriteString(c, time.Now().Format("15:04:05\n"))
@@ -31,10 +34,29 @@ func TimeIn(t time.Time, name string) (time.Time, error) {
 	return t, err
 }
 
+func FlagIn() (string, int) {
+	tz := os.Getenv("TZ")
+	var port = flag.Int("port", 1234, "Port")
+	flag.Parse()
+	return tz, *port
+}
+
+func Time(tz string) string {
+	t, err := TimeIn(time.Now(), tz)
+	if err == nil {
+		return fmt.Sprintf("%v\t: %v\n", t.Location(), t.Format("15:04:05"))
+	} else {
+		return fmt.Sprintf("%v\t: <timezone unknown>\n", t.Location())
+	}
+}
+
 func main() {
-	listener, err := net.Listen("tcp", "localhost:9090")
-	//var port = flag.Int("port", 1234, "Port")
-	//tz := os.Getenv("TZ")
+	//Get variables
+	tz, port := FlagIn()
+	//get time
+	TZtime := Time(tz)
+	server := fmt.Sprintf("localhost:%v", port)
+	listener, err := net.Listen("tcp", server)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -44,6 +66,6 @@ func main() {
 			log.Print(err) // e.g., connection aborted
 			continue
 		}
-		go handleConn(conn) // handle connections concurrently
+		go handleConn(conn, TZtime) // handle connections concurrently
 	}
 }
