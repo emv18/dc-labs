@@ -1,4 +1,3 @@
-// Clock2 is a concurrent TCP server that periodically writes the time.
 package main
 
 import (
@@ -14,9 +13,9 @@ import (
 func handleConn(c net.Conn, TZtime string) {
 	defer c.Close()
 	for {
-		_, err := io.WriteString(c, time.Now().Format("15:04:05\n"))
+		_, err := io.WriteString(c, time.Now().Format("00:00:00\n"))
 		if err != nil {
-			return // e.g., client disconnected
+			return
 		}
 		time.Sleep(1 * time.Second)
 	}
@@ -44,16 +43,14 @@ func FlagIn() (string, int) {
 func Time(tz string) string {
 	t, err := TimeIn(time.Now(), tz)
 	if err == nil {
-		return fmt.Sprintf("%v\t: %v\n", t.Location(), t.Format("15:04:05"))
+		return fmt.Sprintf("%v\t: %v\n", t.Location(), t.Format("00:00:00"))
 	} else {
-		return fmt.Sprintf("%v\t: <timezone unknown>\n", t.Location())
+		return fmt.Sprintf("%v\t: No Timezone\n", t.Location())
 	}
 }
 
 func main() {
-	//Get variables
 	tz, port := FlagIn()
-	//get time
 	TZtime := Time(tz)
 	server := fmt.Sprintf("localhost:%v", port)
 	listener, err := net.Listen("tcp", server)
@@ -63,9 +60,9 @@ func main() {
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
-			log.Print(err) // e.g., connection aborted
+			log.Print(err)
 			continue
 		}
-		go handleConn(conn, TZtime) // handle connections concurrently
+		go handleConn(conn, TZtime)
 	}
 }
