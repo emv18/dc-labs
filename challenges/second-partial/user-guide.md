@@ -22,9 +22,3 @@ User Guide
 6.- Status
     a) Write $ curl -H "Authorization: Bearer 'token'" http://localhost:8080/status
 
-
-<<<<<<< HEAD
-==========
-=======
-==========
->>>>>>> 96012cf9920f3ece2c7eacbf6ffd304316c17edc
