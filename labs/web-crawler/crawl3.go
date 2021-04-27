@@ -79,6 +79,9 @@ func main() {
 			if !seen[link] {
 				seen[link] = true
 				n++
+				if n > depth{
+					return
+				}
 				go func(link string) {
 					worklist <- crawl(link)
 				}(link)
